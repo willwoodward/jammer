@@ -4,6 +4,7 @@ import Home from './components/Home'
 import CreateJam from './components/CreateJam'
 import JoinJam from './components/JoinJam'
 import JamView from './components/JamView'
+import PrepJam from './components/PrepJam'
 import DevView from './components/DevView'
 
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/create" element={<CreateJam />} />
           <Route path="/join" element={<JoinJam />} />
           <Route path="/jam/:code" element={<JamView />} />
+          <Route path="/prep" element={<PrepJam />} />
           <Route path="/dev" element={<DevView />} />
         </Routes>
       </HashRouter>

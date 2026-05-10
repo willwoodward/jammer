@@ -12,6 +12,9 @@ export default function Home() {
           join a jam
         </button>
       </div>
+      <button className="link-btn" onClick={() => navigate('/prep')}>
+        my songs
+      </button>
     </div>
   )
 }

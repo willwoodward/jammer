@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { songs } from '../data/songs'
+import { useSavedSongs } from '../hooks/useSavedSongs'
 import type { CustomSong } from '../types'
 
 interface Props {
@@ -15,24 +16,44 @@ export default function SongPicker({ currentSongId, customSongs, onSelect, onAdd
   const [pasting, setPasting] = useState(false)
   const [pasteTitle, setPasteTitle] = useState('')
   const [pasteLyrics, setPasteLyrics] = useState('')
+  const { savedSongs, addSavedSong } = useSavedSongs()
+
+  const lowerSearch = search.toLowerCase()
 
   const filtered = songs.filter(
     (s) =>
-      s.title.toLowerCase().includes(search.toLowerCase()) ||
-      s.artist.toLowerCase().includes(search.toLowerCase())
+      s.title.toLowerCase().includes(lowerSearch) ||
+      s.artist.toLowerCase().includes(lowerSearch)
   )
 
   const filteredCustom = customSongs.filter(
-    (s) => s.title.toLowerCase().includes(search.toLowerCase())
+    (s) => s.title.toLowerCase().includes(lowerSearch)
   )
+
+  const filteredSaved = savedSongs.filter(
+    (s) => s.title.toLowerCase().includes(lowerSearch)
+  )
+
+  // Don't show saved songs that are already in the jam's custom songs
+  const customTitles = new Set(customSongs.map((s) => s.title.toLowerCase()))
+  const uniqueSaved = filteredSaved.filter((s) => !customTitles.has(s.title.toLowerCase()))
 
   function handlePasteSubmit() {
     if (!pasteTitle.trim() || !pasteLyrics.trim()) return
+    // Save to localStorage and add to jam
+    addSavedSong(pasteTitle.trim(), pasteLyrics.trim())
     onAddCustom(pasteTitle.trim(), pasteLyrics.trim())
     setPasteTitle('')
     setPasteLyrics('')
     setPasting(false)
     setOpen(false)
+  }
+
+  function handleSelectSaved(song: CustomSong) {
+    // Add to jam's custom songs via Firebase, then select it
+    onAddCustom(song.title, song.lyrics)
+    setOpen(false)
+    setSearch('')
   }
 
   if (!open) {
@@ -97,7 +118,18 @@ export default function SongPicker({ currentSongId, customSongs, onSelect, onAdd
               }}
             >
               <span className="song-item-title">{song.title}</span>
-              <span className="song-item-artist pasted-label">pasted</span>
+              <span className="song-item-artist pasted-label">in jam</span>
+            </button>
+          </li>
+        ))}
+        {uniqueSaved.map((song) => (
+          <li key={`saved:${song.id}`}>
+            <button
+              className="song-item"
+              onClick={() => handleSelectSaved(song)}
+            >
+              <span className="song-item-title">{song.title}</span>
+              <span className="song-item-artist pasted-label">saved</span>
             </button>
           </li>
         ))}
