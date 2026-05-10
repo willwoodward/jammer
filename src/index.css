@@ -1,0 +1,415 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --subtle: #888888;
+  --border: #e0e0e0;
+  --accent: #111111;
+  --accent-text: #ffffff;
+  --chord: #666666;
+  --section-label: #aaaaaa;
+}
+
+[data-theme='dark'] {
+  --bg: #111111;
+  --text: #e8e8e8;
+  --subtle: #777777;
+  --border: #333333;
+  --accent: #e8e8e8;
+  --accent-text: #111111;
+  --chord: #999999;
+  --section-label: #555555;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+/* Scrollbar styling fallback */
+[data-theme='dark'] * {
+  scrollbar-color: #444 #111;
+}
+
+[data-theme='light'] * {
+  scrollbar-color: #ccc #fff;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* ---------- Home / Create / Join ---------- */
+
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.home h1 {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  text-transform: lowercase;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 280px;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.8rem 1.5rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  transition: opacity 0.15s;
+}
+
+button:active {
+  opacity: 0.7;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+button.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.subtle {
+  color: var(--subtle);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.error {
+  color: #c44;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ---------- Code Input ---------- */
+
+.code-input {
+  font-family: inherit;
+  font-size: 1.8rem;
+  text-align: center;
+  letter-spacing: 0.3em;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  max-width: 240px;
+}
+
+.code-input:focus {
+  border-color: var(--text);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* ---------- Jam View ---------- */
+
+.jam-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.jam-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.jam-code {
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: var(--subtle);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 1.2rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.view-toggle {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
+  color: var(--subtle);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+
+.view-toggle.active {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.theme-toggle {
+  font-size: 1rem;
+}
+
+/* ---------- Content ---------- */
+
+.jam-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1.25rem 6rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60%;
+  color: var(--subtle);
+}
+
+/* ---------- Lyrics ---------- */
+
+.lyrics {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.song-title {
+  font-size: 1.4rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+.song-artist {
+  font-size: 0.85rem;
+  color: var(--subtle);
+  margin-bottom: 2rem;
+}
+
+.section {
+  margin-bottom: 1.8rem;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--section-label);
+  margin-bottom: 0.5rem;
+}
+
+.section-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.line {
+  line-height: 1;
+}
+
+.chord-line {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8rem;
+  color: var(--chord);
+  margin: 0;
+  line-height: 1.4;
+  white-space: pre;
+}
+
+.lyric-line {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ---------- Song Picker ---------- */
+
+.jam-footer {
+  flex-shrink: 0;
+}
+
+.song-picker-bar {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.song-picker-toggle {
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.song-picker {
+  border-top: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  max-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.song-search {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text);
+  outline: none;
+}
+
+.song-search:focus {
+  border-color: var(--text);
+}
+
+.song-list {
+  list-style: none;
+  overflow-y: auto;
+  flex: 1;
+  max-height: 40vh;
+}
+
+.song-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.7rem 0.5rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  text-align: left;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.song-item.active {
+  font-weight: 600;
+}
+
+.song-item-artist {
+  font-size: 0.8rem;
+  color: var(--subtle);
+}
+
+/* ---------- Dev View ---------- */
+
+.dev-launcher {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 0.75rem;
+  padding: 2rem;
+}
+
+.dev-launcher h2 {
+  font-weight: 400;
+}
+
+.dev-view {
+  display: flex;
+  height: 100vh;
+  gap: 1px;
+  background: var(--border);
+}
+
+.dev-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.dev-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--subtle);
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.dev-pane iframe {
+  flex: 1;
+  border: none;
+  width: 100%;
+}
+
+.dev-waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  color: var(--subtle);
+  font-size: 0.9rem;
+}
