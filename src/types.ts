@@ -24,10 +24,17 @@ export interface Song {
 
 export type ViewMode = 'lyrics' | 'chords'
 export type Theme = 'light' | 'dark'
-export type Role = 'leader' | 'participant'
+export type Role = 'leader' | 'assistant' | 'participant'
+
+export interface CustomSong {
+  id: string
+  title: string
+  lyrics: string
+}
 
 export interface JamState {
   code: string
   currentSongId: string | null
   role: Role
+  customSongs: CustomSong[]
 }

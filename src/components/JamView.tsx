@@ -3,13 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useJam } from '../context/JamContext'
 import { songs } from '../data/songs'
 import LyricsView from './LyricsView'
+import CustomLyricsView from './CustomLyricsView'
 import SongPicker from './SongPicker'
 import { HiOutlineUsers } from 'react-icons/hi2'
 import type { ViewMode, Theme } from '../types'
 
 export default function JamView() {
   const { code } = useParams<{ code: string }>()
-  const { jam, memberCount, selectSong, leaveJam } = useJam()
+  const { jam, memberCount, selectSong, addCustomSong, leaveJam } = useJam()
   const navigate = useNavigate()
   const [viewMode, setViewMode] = useState<ViewMode>('lyrics')
   const [theme, setTheme] = useState<Theme>(() => {
@@ -34,7 +35,17 @@ export default function JamView() {
 
   if (!jam) return null
 
-  const currentSong = jam.currentSongId ? songs.find((s) => s.id === jam.currentSongId) : null
+  const isCustom = jam.currentSongId?.startsWith('custom:')
+  const currentSong = jam.currentSongId
+    ? isCustom
+      ? null
+      : songs.find((s) => s.id === jam.currentSongId)
+    : null
+  const currentCustomSong = isCustom
+    ? jam.customSongs.find((s) => s.id === jam.currentSongId!.replace('custom:', ''))
+    : null
+
+  const canPickSongs = jam.role !== 'participant'
 
   return (
     <div className="jam-view">
@@ -42,10 +53,15 @@ export default function JamView() {
         <button className="icon-btn" onClick={leaveJam} title="Leave jam" aria-label="Leave jam">
           &larr;
         </button>
-        <span className="jam-code">
-          {jam.code}
-          {memberCount > 0 && <span className="member-count"><HiOutlineUsers /> {memberCount}</span>}
-        </span>
+        <div className="jam-codes">
+          <span className="jam-code">
+            {jam.code}
+            {memberCount > 0 && <span className="member-count"><HiOutlineUsers /> {memberCount}</span>}
+          </span>
+          {jam.role === 'leader' && (
+            <span className="jam-code assistant-code">{jam.code}-A</span>
+          )}
+        </div>
         <div className="header-controls">
           <button
             className={`view-toggle ${viewMode === 'chords' ? 'active' : ''}`}
@@ -66,9 +82,11 @@ export default function JamView() {
       <main className="jam-content">
         {currentSong ? (
           <LyricsView song={currentSong} viewMode={viewMode} />
+        ) : currentCustomSong ? (
+          <CustomLyricsView song={currentCustomSong} />
         ) : (
           <div className="empty-state">
-            {jam.role === 'leader' ? (
+            {canPickSongs ? (
               <p>pick a song to get started</p>
             ) : (
               <p>waiting for a song...</p>
@@ -77,9 +95,14 @@ export default function JamView() {
         )}
       </main>
 
-      {jam.role === 'leader' && (
+      {canPickSongs && (
         <footer className="jam-footer">
-          <SongPicker currentSongId={jam.currentSongId} onSelect={selectSong} />
+          <SongPicker
+            currentSongId={jam.currentSongId}
+            customSongs={jam.customSongs}
+            onSelect={selectSong}
+            onAddCustom={addCustomSong}
+          />
         </footer>
       )}
     </div>

@@ -15,7 +15,7 @@ export default function JoinJam() {
     const autoCode = searchParams.get('auto')
     if (autoCode) {
       joinJam(autoCode).then((ok) => {
-        if (ok) navigate(`/jam/${autoCode}`)
+        if (ok) navigate(`/jam/${autoCode.replace(/-A$/i, '')}`)
       })
     }
   }, [searchParams, joinJam, navigate])
@@ -31,7 +31,8 @@ export default function JoinJam() {
     setJoining(false)
 
     if (ok) {
-      navigate(`/jam/${trimmed.toUpperCase()}`)
+      const jamCode = trimmed.toUpperCase().replace(/-A$/, '')
+      navigate(`/jam/${jamCode}`)
     } else {
       setError('jam not found')
     }
@@ -45,7 +46,7 @@ export default function JoinJam() {
           value={code}
           onChange={(e) => { setCode(e.target.value.toUpperCase()); setError('') }}
           placeholder="enter code"
-          maxLength={5}
+          maxLength={7}
           autoFocus
           autoComplete="off"
           className="code-input"
