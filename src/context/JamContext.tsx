@@ -1,10 +1,11 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
-import { ref, set, onValue, remove, get, type Unsubscribe } from 'firebase/database'
+import { ref, set, onValue, remove, get, push, onDisconnect, type Unsubscribe } from 'firebase/database'
 import { db, isConfigured } from '../firebase'
 import type { JamState } from '../types'
 
 interface JamContextValue {
   jam: JamState | null
+  memberCount: number
   createJam: () => string
   joinJam: (code: string) => boolean | Promise<boolean>
   selectSong: (songId: string) => void
@@ -28,7 +29,10 @@ const CHANNEL_NAME = 'worship-jam'
 export function JamProvider({ children }: { children: ReactNode }) {
   const [jam, setJam] = useState<JamState | null>(null)
   const [synced, setSynced] = useState(false)
+  const [memberCount, setMemberCount] = useState(0)
   const unsubRef = useRef<Unsubscribe | null>(null)
+  const memberUnsubRef = useRef<Unsubscribe | null>(null)
+  const memberRefPath = useRef<string | null>(null)
   const channelRef = useRef<BroadcastChannel | null>(null)
 
   // BroadcastChannel fallback for local dev (when Firebase isn't configured)
@@ -67,6 +71,31 @@ export function JamProvider({ children }: { children: ReactNode }) {
     return () => {
       unsub()
       unsubRef.current = null
+    }
+  }, [jam?.code])
+
+  // Track members: add self on join, auto-remove on disconnect
+  useEffect(() => {
+    if (!isConfigured || !db || !jam?.code) return
+
+    const membersRef = ref(db, `jams/${jam.code}/members`)
+    const myRef = push(membersRef)
+    set(myRef, true)
+    onDisconnect(myRef).remove()
+    memberRefPath.current = myRef.toString()
+
+    const unsub = onValue(membersRef, (snapshot) => {
+      const data = snapshot.val()
+      setMemberCount(data ? Object.keys(data).length : 0)
+    })
+
+    memberUnsubRef.current = unsub
+
+    return () => {
+      remove(myRef)
+      unsub()
+      memberUnsubRef.current = null
+      memberRefPath.current = null
     }
   }, [jam?.code])
 
@@ -123,12 +152,17 @@ export function JamProvider({ children }: { children: ReactNode }) {
       unsubRef.current()
       unsubRef.current = null
     }
+    if (memberUnsubRef.current) {
+      memberUnsubRef.current()
+      memberUnsubRef.current = null
+    }
+    setMemberCount(0)
     setSynced(false)
     setJam(null)
   }, [jam])
 
   return (
-    <JamContext.Provider value={{ jam, createJam, joinJam, selectSong, leaveJam, synced }}>
+    <JamContext.Provider value={{ jam, memberCount, createJam, joinJam, selectSong, leaveJam, synced }}>
       {children}
     </JamContext.Provider>
   )

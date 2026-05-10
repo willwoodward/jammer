@@ -4,11 +4,12 @@ import { useJam } from '../context/JamContext'
 import { songs } from '../data/songs'
 import LyricsView from './LyricsView'
 import SongPicker from './SongPicker'
+import { HiOutlineUsers } from 'react-icons/hi2'
 import type { ViewMode, Theme } from '../types'
 
 export default function JamView() {
   const { code } = useParams<{ code: string }>()
-  const { jam, selectSong, leaveJam } = useJam()
+  const { jam, memberCount, selectSong, leaveJam } = useJam()
   const navigate = useNavigate()
   const [viewMode, setViewMode] = useState<ViewMode>('lyrics')
   const [theme, setTheme] = useState<Theme>(() => {
@@ -41,7 +42,10 @@ export default function JamView() {
         <button className="icon-btn" onClick={leaveJam} title="Leave jam" aria-label="Leave jam">
           &larr;
         </button>
-        <span className="jam-code">{jam.code}</span>
+        <span className="jam-code">
+          {jam.code}
+          {memberCount > 0 && <span className="member-count"><HiOutlineUsers /> {memberCount}</span>}
+        </span>
         <div className="header-controls">
           <button
             className={`view-toggle ${viewMode === 'chords' ? 'active' : ''}`}
