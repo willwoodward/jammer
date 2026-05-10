@@ -6,5 +6,5 @@ export default defineConfig({
   plugins: [react()],
   // For GitHub Pages: set to '/<repo-name>/'
   // For custom domain or Netlify: set to '/'
-  base: process.env.GITHUB_PAGES ? '/worship/' : '/',
+  base: process.env.GITHUB_PAGES ? '/jammer/' : '/',
 })
