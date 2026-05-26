@@ -36,26 +36,35 @@ Tap "my songs" on the home screen to paste and save songs before the jam starts.
 - BroadcastChannel as local dev fallback
 - No accounts, no app install — just a URL
 
-## Setup
+## Getting started
+
+**Prerequisites:** Node.js 18+, git
 
 ```bash
+git clone https://github.com/willwoodward/jammer.git
+cd jammer
 npm install
-cp .env.example .env
-# Fill in your Firebase config values in .env
+```
+
+Create a `.env` file in the root — ask Will to share this with you, then:
+
+```bash
 npm run dev
 ```
 
-### Firebase
+Open [http://localhost:5173](http://localhost:5173). That's it.
 
-1. Create a project at [console.firebase.google.com](https://console.firebase.google.com)
-2. Add a web app and copy the config
-3. Enable Realtime Database (start in test mode)
-4. Fill in the values in `.env`
+### Test multi-device sync locally
 
-### Deploy to GitHub Pages
+Open [http://localhost:5173/#/dev](http://localhost:5173/#/dev) to see a side-by-side leader + participant view syncing in real time.
 
-The app deploys automatically via GitHub Actions on push to `main`. Add your Firebase config values as repository secrets (same names as in `.env.example`). Enable GitHub Pages with source set to "GitHub Actions" in repo settings.
+### Deploy
 
-## Dev
+Pushes to `main` auto-deploy to GitHub Pages via GitHub Actions. No manual steps needed.
 
-`/dev` route shows leader and participant views side by side for testing.
+## Dev notes
+
+- `/dev` — side-by-side test view
+- Firebase syncs jam state across devices; BroadcastChannel is used as a fallback when `.env` isn't configured
+- Song lyrics are bundled in `src/data/songs.ts` — add new public domain songs there
+- Pasted/custom songs are stored in the user's `localStorage` and synced ephemerally via Firebase for the duration of a jam
