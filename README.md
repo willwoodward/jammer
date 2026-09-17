@@ -46,6 +46,18 @@ Leaders and assistants can paste lyrics for any song directly into the app. Past
 - Synced to everyone in the jam via Firebase (temporarily, for the duration of the jam)
 - No copyrighted content is stored on any server
 
+### Multiple languages
+
+A song can carry translations, and **each person picks their own language on their own phone**. The leader chooses the song; one person reads it in English, the person beside them reads the same song in Polish. A projector can only ever show one language — this is the thing jammer can do that the AV system can't.
+
+To add one: "my songs" → **+ language** on a song → pick the language and paste the translated lyrics. If you have a SongSelect export in that language, paste that and the verses are read automatically.
+
+Tap **both** to show the original in smaller type beneath each line — useful for people bridging two languages, or when the leader is calling out English line cues.
+
+Amazing Grace ships with a Spanish translation as a worked example. **It has not been checked by a Spanish speaker** — verify it before a congregation sings from it.
+
+Translations are supplied by you, never machine-translated: a literal translation doesn't fit the tune, and jammer doesn't send lyrics anywhere. If a song has no translation in someone's chosen language, they simply see the original.
+
 ### Pre-jam setup
 
 Tap "my songs" on the home screen to paste and save songs before the jam starts. When you open the song picker during a jam, your saved songs are ready to go.
@@ -102,6 +114,6 @@ Pushes to `main` auto-deploy to GitHub Pages via GitHub Actions. No manual steps
 
 - `/dev` — side-by-side test view
 - Firebase syncs jam state across devices; BroadcastChannel is used as a fallback when `.env` isn't configured
-- Song lyrics are bundled in `src/data/songs.ts` — add new public domain songs there
+- Song lyrics are bundled in `src/data/songs.ts` — add new public domain songs there, with optional `translations` per song
 - Pasted/custom songs are stored in the user's `localStorage` and synced ephemerally via Firebase for the duration of a jam
 - Song importers live in `src/lib/parsers/` — `songselect.ts` is hand-written, `propresenter.ts` wraps the `propresenter-parser` package and is loaded on demand so participants never download it

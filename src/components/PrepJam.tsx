@@ -8,9 +8,20 @@ import { sourceLabel } from '../lib/customSong'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { isIos } from '../lib/pwa'
 import VirtualList from './VirtualList'
+import TranslationEditor from './TranslationEditor'
+import type { CustomSong } from '../types'
 
 export default function PrepJam() {
-  const { savedSongs, addSavedSong, addSavedSongs, removeSavedSong, storageError } = useSavedSongs()
+  const {
+    savedSongs,
+    addSavedSong,
+    addSavedSongs,
+    removeSavedSong,
+    setTranslation,
+    removeTranslation,
+    storageError,
+  } = useSavedSongs()
+  const [translating, setTranslating] = useState<CustomSong | null>(null)
   const [pasting, setPasting] = useState(false)
   const [pasteTitle, setPasteTitle] = useState('')
   const [pasteLyrics, setPasteLyrics] = useState('')
@@ -82,7 +93,16 @@ export default function PrepJam() {
       </header>
 
       <main className="prep-content">
-        {pasting ? (
+        {translating ? (
+          <TranslationEditor
+            song={translating}
+            onSave={(translation) => {
+              setTranslation(translating.id, translation)
+              setTranslating(null)
+            }}
+            onCancel={() => setTranslating(null)}
+          />
+        ) : pasting ? (
           <div className="prep-paste">
             <input
               type="text"
@@ -180,13 +200,32 @@ export default function PrepJam() {
                           {song.sections ? ` · ${song.sections.length} sections` : ''}
                         </span>
                       </div>
-                      <button
-                        className="icon-btn remove-btn"
-                        onClick={() => removeSavedSong(song.id)}
-                        aria-label={`Remove ${song.title}`}
-                      >
-                        &times;
-                      </button>
+                      <div className="prep-song-actions">
+                        {(song.translations ?? []).map((t) => (
+                          <button
+                            key={t.language}
+                            className="language-chip"
+                            onClick={() => removeTranslation(song.id, t.language)}
+                            title={`Remove ${t.name} translation`}
+                          >
+                            {t.name} &times;
+                          </button>
+                        ))}
+                        <button
+                          className="language-chip add"
+                          onClick={() => setTranslating(song)}
+                          title={`Add a translation of ${song.title}`}
+                        >
+                          + language
+                        </button>
+                        <button
+                          className="icon-btn remove-btn"
+                          onClick={() => removeSavedSong(song.id)}
+                          aria-label={`Remove ${song.title}`}
+                        >
+                          &times;
+                        </button>
+                      </div>
                     </div>
                   )}
                 />

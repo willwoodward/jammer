@@ -37,6 +37,12 @@ export function JamProvider({ children }: { children: ReactNode }) {
   const customSongsUnsubRef = useRef<Unsubscribe | null>(null)
   const memberRefPath = useRef<string | null>(null)
   const channelRef = useRef<BroadcastChannel | null>(null)
+  // The channel handler is registered once, so it reads the jam through a ref
+  const jamRef = useRef<JamState | null>(null)
+
+  useEffect(() => {
+    jamRef.current = jam
+  }, [jam])
 
   // BroadcastChannel fallback for local dev (when Firebase isn't configured)
   useEffect(() => {
@@ -44,13 +50,43 @@ export function JamProvider({ children }: { children: ReactNode }) {
     const ch = new BroadcastChannel(CHANNEL_NAME)
     channelRef.current = ch
     ch.onmessage = (event) => {
-      const { type, songId, code } = event.data
+      const { type, songId, code, customSongs } = event.data
+
       if (type === 'song-change') {
         setJam((prev) => {
           if (prev && prev.code === code) {
             return { ...prev, currentSongId: songId }
           }
           return prev
+        })
+        return
+      }
+
+      // Someone has just joined and has no state yet. Without Firebase there
+      // is nowhere to look it up, so whoever is already in the jam answers.
+      if (type === 'request-state') {
+        const current = jamRef.current
+        if (current && current.code === code && current.role !== 'participant') {
+          ch.postMessage({
+            type: 'state',
+            code,
+            songId: current.currentSongId,
+            customSongs: current.customSongs,
+          })
+        }
+        return
+      }
+
+      if (type === 'state') {
+        setJam((prev) => {
+          if (!prev || prev.code !== code) return prev
+          // Only fill in what we don't already have
+          if (prev.currentSongId) return prev
+          return {
+            ...prev,
+            currentSongId: songId ?? null,
+            customSongs: customSongs ?? prev.customSongs,
+          }
         })
       }
     }
@@ -153,6 +189,8 @@ export function JamProvider({ children }: { children: ReactNode }) {
       setJam({ code: jamCode, currentSongId: data.currentSongId || null, role, customSongs: [] })
     } else {
       setJam({ code: jamCode, currentSongId: null, role, customSongs: [] })
+      // Ask whoever is already in the jam what's currently playing
+      channelRef.current?.postMessage({ type: 'request-state', code: jamCode })
     }
     return true
   }, [])

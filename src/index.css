@@ -174,12 +174,19 @@ form {
 }
 
 .jam-header {
-  display: flex;
+  /* space-between would push the code off-centre as controls are added to the
+     right, so the three areas get explicit columns instead */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  gap: 0.5rem;
+}
+
+.jam-header > :first-child {
+  justify-self: start;
 }
 
 .jam-codes {
@@ -216,6 +223,8 @@ form {
 .header-controls {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  justify-self: end;
   gap: 0.5rem;
 }
 
@@ -312,6 +321,19 @@ form {
   margin: 0;
   line-height: 1.4;
   white-space: pre;
+}
+
+.song-note {
+  font-size: 0.75rem;
+  color: var(--subtle);
+  font-style: italic;
+  margin-top: 0.15rem;
+}
+
+.lyric-line.secondary {
+  color: var(--subtle);
+  font-size: 0.85em;
+  margin-top: 0.1rem;
 }
 
 .lyric-line {
@@ -687,6 +709,74 @@ form {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+/* ---------- Languages ---------- */
+
+.language-select {
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.3rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  max-width: 7rem;
+}
+
+/* A select's drop-down inherits the control's background, so `transparent`
+   leaves the native popup white with near-white text in dark mode. Both the
+   control and its options need a real colour. */
+.language-select,
+select.song-search {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.language-select option,
+select.song-search option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Rows in the saved-songs list are virtualised and must stay a uniform
+   height, so these never wrap onto a second line. */
+.prep-song-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.language-chip {
+  background: transparent;
+  color: var(--subtle);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  font-family: inherit;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.language-chip.add {
+  border-style: dashed;
+}
+
+.translation-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.translation-alignment {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--subtle);
+}
+
+.translation-alignment.warn {
+  color: var(--text);
 }
 
 /* ---------- Join QR ---------- */

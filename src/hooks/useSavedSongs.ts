@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { dedupeKey } from '../lib/library'
-import type { CustomSong, ImportedSong } from '../types'
+import type { CustomSong, ImportedSong, SongTranslation } from '../types'
 
 const STORAGE_KEY = 'worship-saved-songs'
 
@@ -84,6 +84,35 @@ export function useSavedSongs() {
     [commit]
   )
 
+  /** Adds or replaces a translation on a saved song. */
+  const setTranslation = useCallback(
+    (songId: string, translation: SongTranslation) => {
+      commit(
+        songsRef.current.map((song) => {
+          if (song.id !== songId) return song
+          const others = (song.translations ?? []).filter((t) => t.language !== translation.language)
+          return { ...song, translations: [...others, translation] }
+        })
+      )
+    },
+    [commit]
+  )
+
+  const removeTranslation = useCallback(
+    (songId: string, language: string) => {
+      commit(
+        songsRef.current.map((song) => {
+          if (song.id !== songId) return song
+          const translations = (song.translations ?? []).filter((t) => t.language !== language)
+          return translations.length > 0
+            ? { ...song, translations }
+            : { ...song, translations: undefined }
+        })
+      )
+    },
+    [commit]
+  )
+
   const removeSavedSong = useCallback(
     (id: string) => {
       commit(songsRef.current.filter((s) => s.id !== id))
@@ -91,5 +120,13 @@ export function useSavedSongs() {
     [commit]
   )
 
-  return { savedSongs, addSavedSong, addSavedSongs, removeSavedSong, storageError }
+  return {
+    savedSongs,
+    addSavedSong,
+    addSavedSongs,
+    removeSavedSong,
+    setTranslation,
+    removeTranslation,
+    storageError,
+  }
 }

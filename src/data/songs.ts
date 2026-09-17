@@ -48,6 +48,59 @@ export const songs: Song[] = [
         ],
       },
     ],
+    // NOTE: This is the traditional Spanish rendering of Amazing Grace
+    // ("Sublime Gracia"), which is public domain — but it has NOT been checked
+    // by a Spanish speaker. It is here to exercise the translation feature.
+    // Have a native speaker verify it before any congregation sings from it.
+    translations: [
+      {
+        language: 'es',
+        name: 'Español',
+        title: 'Sublime Gracia',
+        sections: [
+          {
+            type: 'verse',
+            label: 'Estrofa 1',
+            lines: [
+              { text: 'Sublime gracia del Señor' },
+              { text: 'que a un infeliz salvó;' },
+              { text: 'fui ciego mas hoy veo yo,' },
+              { text: 'perdido y él me halló.' },
+            ],
+          },
+          {
+            type: 'verse',
+            label: 'Estrofa 2',
+            lines: [
+              { text: 'Su gracia me enseñó a temer,' },
+              { text: 'mis dudas ahuyentó;' },
+              { text: '¡oh cuán precioso fue a mi ser' },
+              { text: 'cuando él me transformó!' },
+            ],
+          },
+          {
+            type: 'verse',
+            label: 'Estrofa 3',
+            lines: [
+              { text: 'En los peligros o aflicción' },
+              { text: 'que yo he tenido aquí,' },
+              { text: 'su gracia siempre me libró' },
+              { text: 'y me guiará feliz.' },
+            ],
+          },
+          {
+            type: 'verse',
+            label: 'Estrofa 4',
+            lines: [
+              { text: 'Y cuando en Sión por siglos mil' },
+              { text: 'brillando esté cual sol,' },
+              { text: 'yo cantaré por siempre allí' },
+              { text: 'su amor que me salvó.' },
+            ],
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'holy-holy-holy',

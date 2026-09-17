@@ -14,12 +14,26 @@ export interface Section {
   lines: Line[]
 }
 
+/** A singable translation of a song, aligned to the original's sections. */
+export interface SongTranslation {
+  /** Stable code, e.g. 'es' — matched against the viewer's chosen language. */
+  language: string
+  /** Name shown in the picker, in that language, e.g. 'Español'. */
+  name: string
+  title?: string
+  sections: Section[]
+}
+
 export interface Song {
   id: string
   title: string
   artist: string
   key: string
   sections: Section[]
+  /** The language these lyrics are written in. Defaults to English. */
+  language?: string
+  /** Other languages this song can be sung in. */
+  translations?: SongTranslation[]
 }
 
 export type ViewMode = 'lyrics' | 'chords'
@@ -38,6 +52,10 @@ export interface CustomSong {
   sections?: Section[]
   /** Where this song came from, shown in the UI. */
   source?: ImportSource
+  /** The language these lyrics are written in. Defaults to English. */
+  language?: string
+  /** Other languages this song can be sung in. */
+  translations?: SongTranslation[]
 }
 
 export type ImportSource = 'pasted' | 'songselect' | 'propresenter'

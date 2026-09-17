@@ -7,7 +7,16 @@ import CustomLyricsView from './CustomLyricsView'
 import SongPicker from './SongPicker'
 import QrModal from './QrModal'
 import { HiOutlineUsers, HiOutlineQrCode } from 'react-icons/hi2'
-import { asSong } from '../lib/customSong'
+import {
+  asSong,
+  availableTranslations,
+  localise,
+  originalSections,
+  translationFor,
+  ORIGINAL,
+} from '../lib/customSong'
+import { DEFAULT_LANGUAGE, isRtl, languageName } from '../lib/languages'
+import { useLanguage } from '../hooks/useLanguage'
 import type { ViewMode, Theme } from '../types'
 
 export default function JamView() {
@@ -15,6 +24,7 @@ export default function JamView() {
   const navigate = useNavigate()
   const [viewMode, setViewMode] = useState<ViewMode>('lyrics')
   const [showQr, setShowQr] = useState(false)
+  const { language, setLanguage, bilingual, setBilingual } = useLanguage()
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('worship-theme') as Theme) ||
@@ -38,16 +48,35 @@ export default function JamView() {
   if (!jam) return null
 
   const isCustom = jam.currentSongId?.startsWith('custom:')
-  const currentSong = jam.currentSongId
-    ? isCustom
-      ? null
-      : songs.find((s) => s.id === jam.currentSongId)
-    : null
+  const builtInSong = jam.currentSongId && !isCustom
+    ? songs.find((s) => s.id === jam.currentSongId)
+    : undefined
+  const currentSong = builtInSong ? localise(builtInSong, language) : null
   const currentCustomSong = isCustom
     ? jam.customSongs.find((s) => s.id === jam.currentSongId!.replace('custom:', ''))
     : null
   // Imported songs that parsed into sections render exactly like a built-in hymn
-  const currentCustomAsSong = currentCustomSong ? asSong(currentCustomSong) : null
+  const currentCustomAsSong = currentCustomSong ? asSong(currentCustomSong, language) : null
+
+  // Each viewer picks their own language, so this never touches jam state
+  const translatable = currentCustomSong ?? builtInSong
+  const translations = availableTranslations(translatable)
+  const activeTranslation = translatable ? translationFor(translatable, language) : undefined
+  const showingTranslation = activeTranslation !== undefined
+  // In bilingual mode the original sits in smaller type beneath each line
+  const secondary =
+    bilingual && translatable
+      ? originalSections(translatable, language, activeTranslation)
+      : undefined
+  // The base lyrics are almost always English, but a church can import a song
+  // in another language and translate it — so the song says which it is
+  const baseLanguage = translatable?.language ?? DEFAULT_LANGUAGE
+  // Explains why someone who chose a language is reading the base lyrics,
+  // rather than letting them think their choice was lost
+  const languageNote =
+    language !== ORIGINAL && !showingTranslation && translatable
+      ? `no ${languageName(language)} for this song`
+      : undefined
 
   const canPickSongs = jam.role !== 'participant'
 
@@ -67,6 +96,30 @@ export default function JamView() {
           )}
         </div>
         <div className="header-controls">
+          {showingTranslation && (
+            <button
+              className={`view-toggle ${bilingual ? 'active' : ''}`}
+              onClick={() => setBilingual(!bilingual)}
+              title="Show the original underneath"
+            >
+              both
+            </button>
+          )}
+          {translations.length > 0 && (
+            <select
+              className="language-select"
+              value={showingTranslation ? language : ORIGINAL}
+              onChange={(e) => setLanguage(e.target.value)}
+              aria-label="Language"
+            >
+              <option value={ORIGINAL}>{languageName(baseLanguage)}</option>
+              {translations.map((t) => (
+                <option key={t.language} value={t.language}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          )}
           <button
             className="icon-btn"
             onClick={() => setShowQr(true)}
@@ -93,9 +146,23 @@ export default function JamView() {
 
       <main className="jam-content">
         {currentSong ? (
-          <LyricsView song={currentSong} viewMode={viewMode} />
+          <div dir={showingTranslation && isRtl(language) ? 'rtl' : undefined}>
+            <LyricsView
+              song={currentSong}
+              viewMode={viewMode}
+              secondary={secondary}
+              note={languageNote}
+            />
+          </div>
         ) : currentCustomAsSong ? (
-          <LyricsView song={currentCustomAsSong} viewMode={viewMode} />
+          <div dir={showingTranslation && isRtl(language) ? 'rtl' : undefined}>
+            <LyricsView
+              song={currentCustomAsSong}
+              viewMode={viewMode}
+              secondary={secondary}
+              note={languageNote}
+            />
+          </div>
         ) : currentCustomSong ? (
           <CustomLyricsView song={currentCustomSong} />
         ) : (
