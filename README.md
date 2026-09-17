@@ -50,6 +50,17 @@ Leaders and assistants can paste lyrics for any song directly into the app. Past
 
 Tap "my songs" on the home screen to paste and save songs before the jam starts. When you open the song picker during a jam, your saved songs are ready to go.
 
+## Install it
+
+jammer runs in the browser with nothing to install. Leaders should install it anyway:
+
+- **iPhone/iPad** — Share → Add to Home Screen
+- **Android/desktop Chrome** — an "install jammer" button appears in "my songs"
+
+This matters because browsers clear site storage: Safari wipes it after about a week without opening the site, which would take your saved songs with it. Installed web apps are outside that timer, and jammer also asks the browser for persistent storage.
+
+If you don't install, nothing breaks — songs still save to normal browser storage exactly as before, and "my songs" tells you they aren't protected. Use **export** for a copy you keep yourself either way.
+
 ## Built-in songs
 
 16 public domain hymns with guitar chords, including Amazing Grace, Holy Holy Holy, Be Thou My Vision, It Is Well, How Great Thou Art, Come Thou Fount, and more.

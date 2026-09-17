@@ -610,6 +610,38 @@ form {
   font-size: 0.8rem;
 }
 
+.prep-storage-notice {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0.5rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--subtle);
+}
+
+.prep-storage-notice p + p {
+  margin-top: 0.5rem;
+}
+
+.prep-storage-notice strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.prep-install-btn {
+  margin-top: 0.75rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .prep-section-head {
   display: flex;
   align-items: baseline;

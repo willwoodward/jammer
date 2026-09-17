@@ -5,6 +5,8 @@ import { songs as builtInSongs } from '../data/songs'
 import { IMPORT_ACCEPT, importSongFiles, parseSongText } from '../lib/parsers'
 import { downloadLibrary } from '../lib/library'
 import { sourceLabel } from '../lib/customSong'
+import { useInstallPrompt } from '../hooks/useInstallPrompt'
+import { isIos } from '../lib/pwa'
 import VirtualList from './VirtualList'
 
 export default function PrepJam() {
@@ -17,6 +19,7 @@ export default function PrepJam() {
   const [showHelp, setShowHelp] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
+  const { canInstall, install, installed, persisted, ensurePersisted } = useInstallPrompt()
   const navigate = useNavigate()
 
   // `webkitdirectory` isn't in the React types, so it's set on the element
@@ -52,6 +55,8 @@ export default function PrepJam() {
     )
     const summary = songs.length > 0 ? addSavedSongs(songs) : { added: 0, duplicates: 0, saved: true }
     setProgress(null)
+    // Saving songs is the meaningful moment to ask the browser to keep them
+    if (summary.added > 0) void ensurePersisted()
 
     const parts: string[] = []
     if (summary.added > 0) parts.push(`imported ${summary.added} song${summary.added === 1 ? '' : 's'}`)
@@ -149,6 +154,10 @@ export default function PrepJam() {
             {!importing && importMessage && <p className="prep-import-result">{importMessage}</p>}
             {storageError && <p className="prep-import-result error">{storageError}</p>}
 
+            {savedSongs.length > 0 && persisted === false && (
+              <StorageNotice canInstall={canInstall} install={install} installed={installed} />
+            )}
+
             {savedSongs.length > 0 && (
               <div className="prep-section">
                 <div className="prep-section-head">
@@ -201,6 +210,52 @@ export default function PrepJam() {
           </>
         )}
       </main>
+    </div>
+  )
+}
+
+interface StorageNoticeProps {
+  canInstall: boolean
+  install: () => Promise<boolean>
+  installed: boolean
+}
+
+/**
+ * Shown only when the browser has not promised to keep our storage. Songs are
+ * saved either way — this is about whether the browser might clear them later.
+ */
+function StorageNotice({ canInstall, install, installed }: StorageNoticeProps) {
+  return (
+    <div className="prep-storage-notice">
+      <p className="prep-help-heading">keep your songs safe</p>
+      <p>
+        Your songs are saved in this browser. Browsers clear that storage
+        sometimes &mdash; on iPhone, after about a week without opening jammer.
+      </p>
+      {installed ? (
+        <p>
+          jammer is installed, which usually protects them. Use <strong>export</strong>{' '}
+          now and then for a copy you keep yourself.
+        </p>
+      ) : isIos() ? (
+        <p>
+          To stop that, add jammer to your Home Screen: tap the{' '}
+          <strong>Share</strong> button, then <strong>Add to Home Screen</strong>.
+          And use <strong>export</strong> for a copy you keep yourself.
+        </p>
+      ) : (
+        <>
+          <p>
+            Installing jammer keeps them safe, and gives you an icon on your home
+            screen. Either way, <strong>export</strong> gives you a copy you keep.
+          </p>
+          {canInstall && (
+            <button className="prep-install-btn" onClick={() => void install()}>
+              install jammer
+            </button>
+          )}
+        </>
+      )}
     </div>
   )
 }
