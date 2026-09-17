@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useJam } from '../context/JamContext'
 import { songs } from '../data/songs'
 import LyricsView from './LyricsView'
 import CustomLyricsView from './CustomLyricsView'
 import SongPicker from './SongPicker'
-import { HiOutlineUsers } from 'react-icons/hi2'
+import QrModal from './QrModal'
+import { HiOutlineUsers, HiOutlineQrCode } from 'react-icons/hi2'
 import type { ViewMode, Theme } from '../types'
 
 export default function JamView() {
-  const { code } = useParams<{ code: string }>()
   const { jam, memberCount, selectSong, addCustomSong, leaveJam } = useJam()
   const navigate = useNavigate()
   const [viewMode, setViewMode] = useState<ViewMode>('lyrics')
+  const [showQr, setShowQr] = useState(false)
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('worship-theme') as Theme) ||
@@ -64,6 +65,14 @@ export default function JamView() {
         </div>
         <div className="header-controls">
           <button
+            className="icon-btn"
+            onClick={() => setShowQr(true)}
+            title="Show join QR code"
+            aria-label="Show join QR code"
+          >
+            <HiOutlineQrCode />
+          </button>
+          <button
             className={`view-toggle ${viewMode === 'chords' ? 'active' : ''}`}
             onClick={() => setViewMode(viewMode === 'lyrics' ? 'chords' : 'lyrics')}
           >
@@ -105,6 +114,8 @@ export default function JamView() {
           />
         </footer>
       )}
+
+      {showQr && <QrModal code={jam.code} onClose={() => setShowQr(false)} />}
     </div>
   )
 }

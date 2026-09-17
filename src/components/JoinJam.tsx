@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useJam } from '../context/JamContext'
 
@@ -9,15 +9,23 @@ export default function JoinJam() {
   const { joinJam } = useJam()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const autoTried = useRef(false)
 
-  // Auto-join support for dev view
+  // Auto-join from a scanned QR code (and the dev view)
   useEffect(() => {
     const autoCode = searchParams.get('auto')
-    if (autoCode) {
-      joinJam(autoCode).then((ok) => {
-        if (ok) navigate(`/jam/${autoCode.replace(/-A$/i, '')}`)
-      })
-    }
+    if (!autoCode || autoTried.current) return
+    autoTried.current = true
+    setJoining(true)
+    joinJam(autoCode).then((ok) => {
+      setJoining(false)
+      if (ok) {
+        navigate(`/jam/${autoCode.toUpperCase().replace(/-A$/, '')}`)
+      } else {
+        setCode(autoCode.toUpperCase())
+        setError('jam not found')
+      }
+    })
   }, [searchParams, joinJam, navigate])
 
   async function handleJoin(e: React.FormEvent) {

@@ -5,10 +5,14 @@ A minimalist web app for spontaneous worship sessions. One person starts a jam, 
 ## How it works
 
 1. **Leader** taps "start a jam" and gets a 5-character code
-2. **Participants** enter the code to join
+2. **Participants** enter the code to join — or scan the QR code any member can put on screen
 3. Leader picks a song — lyrics appear on everyone's screen in real-time
 4. Toggle between **lyrics** and **chords** view
 5. Light/dark mode
+
+### Sharing the jam
+
+Anyone in a jam can tap the QR button in the header to fill their screen with a scannable join code. Hold up the phone, everyone else scans it, and they land straight in the jam — so joins spread without the code ever being read aloud.
 
 ### Assistant mode
 

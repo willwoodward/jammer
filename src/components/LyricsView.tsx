@@ -5,7 +5,7 @@ interface Props {
   viewMode: ViewMode
 }
 
-function renderChordLine(text: string, chords: { chord: string; position: number }[]): string {
+function renderChordLine(chords: { chord: string; position: number }[]): string {
   const sorted = [...chords].sort((a, b) => a.position - b.position)
   let line = ''
   let pos = 0
@@ -32,7 +32,7 @@ export default function LyricsView({ song, viewMode }: Props) {
             {section.lines.map((line, li) => (
               <div key={li} className="line">
                 {viewMode === 'chords' && line.chords && line.chords.length > 0 && (
-                  <pre className="chord-line">{renderChordLine(line.text, line.chords)}</pre>
+                  <pre className="chord-line">{renderChordLine(line.chords)}</pre>
                 )}
                 <p className="lyric-line">{line.text}</p>
               </div>

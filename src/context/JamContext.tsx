@@ -7,7 +7,7 @@ interface JamContextValue {
   jam: JamState | null
   memberCount: number
   createJam: () => string
-  joinJam: (code: string) => boolean | Promise<boolean>
+  joinJam: (code: string) => Promise<boolean>
   selectSong: (songId: string) => void
   addCustomSong: (title: string, lyrics: string) => void
   leaveJam: () => void
@@ -109,10 +109,10 @@ export function JamProvider({ children }: { children: ReactNode }) {
     const unsub = onValue(customSongsRef, (snapshot) => {
       const data = snapshot.val()
       const songs: CustomSong[] = data
-        ? Object.entries(data).map(([id, val]: [string, any]) => ({
+        ? Object.entries(data).map(([id, val]) => ({
             id,
-            title: val.title,
-            lyrics: val.lyrics,
+            title: (val as CustomSong).title,
+            lyrics: (val as CustomSong).lyrics,
           }))
         : []
       setJam((prev) => prev ? { ...prev, customSongs: songs } : prev)
