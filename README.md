@@ -18,6 +18,27 @@ Anyone in a jam can tap the QR button in the header to fill their screen with a 
 
 The leader can share a separate code (e.g. `ABC42-A`) with a helper. The assistant can pick songs and paste lyrics while the leader keeps playing.
 
+### Importing songs
+
+Tap "my songs" → "import files" to bring in songs you already own:
+
+- **SongSelect** — download a song from SongSelect as `.txt` or `.usr`/`.bin` and import it. Sections, authors and the CCLI song number are read automatically.
+- **ProPresenter** — import `.pro` (ProPresenter 7), or `.pro4`/`.pro5`/`.pro6`. Slide groups become sections, and where the file has a selected arrangement, that order is used.
+
+Imported songs display with proper verse/chorus structure, exactly like the built-in hymns.
+
+Use **import folder** to bring in a whole ProPresenter library at once. Files that aren't songs are ignored, and songs you already have are skipped rather than duplicated.
+
+Tap "where do I find these files?" in the app for step-by-step help.
+
+Everything is parsed in your browser. No file and no lyric is uploaded anywhere — jammer has no server, and there is no CCLI or ProPresenter account involved. You import songs you are already licensed to use.
+
+### Moving your songs between devices
+
+Saved songs live in one browser on one device, so songs imported on the church computer aren't on the phone you lead from.
+
+**export** in "my songs" saves your whole library as a single `.json` file. Move it across however suits — AirDrop, OneDrive, Google Drive, a USB stick, or email it to yourself — then import that file on the other device. Works the same on Windows, macOS, Android and iOS.
+
 ### Pasting lyrics
 
 Leaders and assistants can paste lyrics for any song directly into the app. Pasted songs are:
@@ -72,3 +93,4 @@ Pushes to `main` auto-deploy to GitHub Pages via GitHub Actions. No manual steps
 - Firebase syncs jam state across devices; BroadcastChannel is used as a fallback when `.env` isn't configured
 - Song lyrics are bundled in `src/data/songs.ts` — add new public domain songs there
 - Pasted/custom songs are stored in the user's `localStorage` and synced ephemerally via Firebase for the duration of a jam
+- Song importers live in `src/lib/parsers/` — `songselect.ts` is hand-written, `propresenter.ts` wraps the `propresenter-parser` package and is loaded on demand so participants never download it

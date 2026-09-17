@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "firebase": "^12.13.0",
+    "propresenter-parser": "^1.1.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

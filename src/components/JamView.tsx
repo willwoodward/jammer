@@ -7,6 +7,7 @@ import CustomLyricsView from './CustomLyricsView'
 import SongPicker from './SongPicker'
 import QrModal from './QrModal'
 import { HiOutlineUsers, HiOutlineQrCode } from 'react-icons/hi2'
+import { asSong } from '../lib/customSong'
 import type { ViewMode, Theme } from '../types'
 
 export default function JamView() {
@@ -45,6 +46,8 @@ export default function JamView() {
   const currentCustomSong = isCustom
     ? jam.customSongs.find((s) => s.id === jam.currentSongId!.replace('custom:', ''))
     : null
+  // Imported songs that parsed into sections render exactly like a built-in hymn
+  const currentCustomAsSong = currentCustomSong ? asSong(currentCustomSong) : null
 
   const canPickSongs = jam.role !== 'participant'
 
@@ -91,6 +94,8 @@ export default function JamView() {
       <main className="jam-content">
         {currentSong ? (
           <LyricsView song={currentSong} viewMode={viewMode} />
+        ) : currentCustomAsSong ? (
+          <LyricsView song={currentCustomAsSong} viewMode={viewMode} />
         ) : currentCustomSong ? (
           <CustomLyricsView song={currentCustomSong} />
         ) : (

@@ -1,3 +1,4 @@
+import { sourceLabel } from '../lib/customSong'
 import type { CustomSong } from '../types'
 
 interface Props {
@@ -14,7 +15,7 @@ export default function CustomLyricsView({ song }: Props) {
   return (
     <div className="lyrics">
       <h2 className="song-title">{song.title}</h2>
-      <p className="song-artist">pasted</p>
+      <p className="song-artist">{song.artist || sourceLabel(song)}</p>
       {sections.map((section, si) => (
         <div key={si} className="section">
           <div className="section-lines">

@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
 import { ref, set, onValue, remove, get, push, onDisconnect, type Unsubscribe } from 'firebase/database'
 import { db, isConfigured } from '../firebase'
-import type { JamState, CustomSong } from '../types'
+import type { JamState, CustomSong, ImportedSong } from '../types'
+import { fromFirebase, toFirebase } from '../lib/customSong'
 
 interface JamContextValue {
   jam: JamState | null
@@ -9,7 +10,7 @@ interface JamContextValue {
   createJam: () => string
   joinJam: (code: string) => Promise<boolean>
   selectSong: (songId: string) => void
-  addCustomSong: (title: string, lyrics: string) => void
+  addCustomSong: (song: ImportedSong) => void
   leaveJam: () => void
   synced: boolean
 }
@@ -109,11 +110,7 @@ export function JamProvider({ children }: { children: ReactNode }) {
     const unsub = onValue(customSongsRef, (snapshot) => {
       const data = snapshot.val()
       const songs: CustomSong[] = data
-        ? Object.entries(data).map(([id, val]) => ({
-            id,
-            title: (val as CustomSong).title,
-            lyrics: (val as CustomSong).lyrics,
-          }))
+        ? Object.entries(data).map(([id, val]) => fromFirebase(id, val))
         : []
       setJam((prev) => prev ? { ...prev, customSongs: songs } : prev)
     })
@@ -174,14 +171,14 @@ export function JamProvider({ children }: { children: ReactNode }) {
   )
 
   const addCustomSong = useCallback(
-    (title: string, lyrics: string) => {
+    (song: ImportedSong) => {
       if (!jam) return
 
       if (isConfigured && db) {
         const customSongsRef = ref(db, `jams/${jam.code}/customSongs`)
         const newRef = push(customSongsRef)
         const id = newRef.key!
-        set(newRef, { title, lyrics })
+        set(newRef, toFirebase(song))
         // Auto-select the new song
         const songId = `custom:${id}`
         set(ref(db, `jams/${jam.code}/currentSongId`), songId)
@@ -195,7 +192,7 @@ export function JamProvider({ children }: { children: ReactNode }) {
             ? {
                 ...prev,
                 currentSongId: songId,
-                customSongs: [...prev.customSongs, { id, title, lyrics }],
+                customSongs: [...prev.customSongs, { ...song, id }],
               }
             : prev
         )

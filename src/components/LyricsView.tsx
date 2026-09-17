@@ -24,7 +24,10 @@ export default function LyricsView({ song, viewMode }: Props) {
   return (
     <div className="lyrics">
       <h2 className="song-title">{song.title}</h2>
-      <p className="song-artist">{song.artist}{viewMode === 'chords' && ` · ${song.key}`}</p>
+      <p className="song-artist">
+        {song.artist}
+        {viewMode === 'chords' && song.key && ` · ${song.key}`}
+      </p>
       {song.sections.map((section, si) => (
         <div key={si} className="section">
           {section.label && <p className="section-label">{section.label}</p>}
