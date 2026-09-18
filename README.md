@@ -1,139 +1,116 @@
-# worship
+# jammer
 
-A minimalist web app for spontaneous worship sessions. One person starts a jam, shares a code, and everyone sees the same lyrics on their phone.
+[![Deploy](https://github.com/willwoodward/jammer/actions/workflows/deploy.yml/badge.svg)](https://github.com/willwoodward/jammer/actions/workflows/deploy.yml)
+[![Sweep old jams](https://github.com/willwoodward/jammer/actions/workflows/sweep-jams.yml/badge.svg)](https://github.com/willwoodward/jammer/actions/workflows/sweep-jams.yml)
+[![Live](https://img.shields.io/badge/live-willwoodward.github.io%2Fjammer-111111)](https://willwoodward.github.io/jammer/)
+
+[![Stars](https://img.shields.io/github/stars/willwoodward/jammer?style=social)](https://github.com/willwoodward/jammer/stargazers)
+[![License: MIT](https://img.shields.io/badge/license-MIT-111111)](LICENSE)
+
+A minimalist web app for spontaneous worship sessions. One person starts a jam, shares a code, and everyone sees the same lyrics on their own phone. No accounts, no install, just a URL.
 
 ## How it works
 
 1. **Leader** taps "start a jam" and gets a 5-character code
-2. **Participants** enter the code to join — or scan the QR code any member can put on screen
-3. Leader picks a song — lyrics appear on everyone's screen in real-time
-4. Toggle between **lyrics** and **chords** view
-5. Light/dark mode
+2. **Everyone else** types the code, or scans a QR code
+3. Leader picks a song — lyrics appear on every screen at once
+4. Toggle **lyrics** / **chords**, and light / dark
 
-### Sharing the jam
+### Sharing a jam
 
-Anyone in a jam can tap the QR button in the header to fill their screen with a scannable join code. Hold up the phone, everyone else scans it, and they land straight in the jam — so joins spread without the code ever being read aloud.
+Anyone already in a jam can tap the QR button to fill their screen with a scannable join code — so joins spread sideways through a room without the code ever being read aloud over music.
 
-### Assistant mode
+The leader can also hand a helper the **assistant code** (`ABC42-A`). An assistant picks songs and pastes lyrics while the leader keeps playing.
 
-The leader can share a separate code (e.g. `ABC42-A`) with a helper. The assistant can pick songs and paste lyrics while the leader keeps playing.
+## Songs
 
-### Importing songs
+**19 public domain hymns** with guitar chords ship with the app — Amazing Grace, Be Thou My Vision, It Is Well, How Great Thou Art, Come Thou Fount and more — so it's useful the first time you open it, with nothing to set up.
 
-Tap "my songs" → "import files" to bring in songs you already own:
+Everything else you bring yourself, via "my songs":
 
-- **SongSelect** — download a song from SongSelect as `.txt` or `.usr`/`.bin` and import it. Sections, authors and the CCLI song number are read automatically.
-- **ProPresenter** — import `.pro` (ProPresenter 7), or `.pro4`/`.pro5`/`.pro6`. Slide groups become sections, and where the file has a selected arrangement, that order is used.
+| | |
+|---|---|
+| **Paste** | Type a title, paste lyrics. Saved for next time. |
+| **SongSelect** | Download a song as `.txt` or `.usr`/`.bin` and import it — sections, authors and the CCLI song number are read automatically. |
+| **ProPresenter** | Import `.pro` (ProPresenter 7) or `.pro4`–`.pro6`. Slide groups become sections, following the selected arrangement. **import folder** brings in a whole library at once. |
 
-Imported songs display with proper verse/chorus structure, exactly like the built-in hymns.
+Imported songs display with proper verse and chorus structure, exactly like the built-in hymns. Non-song files are ignored, and songs you already have are skipped rather than duplicated.
 
-Use **import folder** to bring in a whole ProPresenter library at once. Files that aren't songs are ignored, and songs you already have are skipped rather than duplicated.
+Everything is parsed **in your browser**. No file and no lyric is uploaded anywhere, and no CCLI or ProPresenter account is involved — you import songs you are already licensed to use. Songs shared into a jam live in Firebase only for that jam's lifetime and are deleted with it.
 
-Tap "where do I find these files?" in the app for step-by-step help.
+### Moving songs between devices
 
-Everything is parsed in your browser. No file and no lyric is uploaded anywhere — jammer has no server, and there is no CCLI or ProPresenter account involved. You import songs you are already licensed to use.
+Saved songs live in one browser on one device, so a library imported on the church computer isn't on the phone you lead from. **export** saves the lot as a single `.json` file — move it by AirDrop, OneDrive, a USB stick or email, then import it on the other device. Works the same on Windows, macOS, Android and iOS.
 
-### Moving your songs between devices
+## Multiple languages
 
-Saved songs live in one browser on one device, so songs imported on the church computer aren't on the phone you lead from.
+A song can carry translations, and **each person picks their own language on their own phone**. The leader chooses the song; one person reads it in English while the person beside them reads the same song in Polish. A projector can only ever show one language — this is the thing jammer does that an AV system can't.
 
-**export** in "my songs" saves your whole library as a single `.json` file. Move it across however suits — AirDrop, OneDrive, Google Drive, a USB stick, or email it to yourself — then import that file on the other device. Works the same on Windows, macOS, Android and iOS.
+Add one with **+ language** on a saved song, then paste the translated lyrics (a SongSelect export in that language parses into proper verses). Tap **both** to show the original in smaller type beneath each line.
 
-### Pasting lyrics
+Translations are supplied by you, never machine-translated: a literal translation doesn't fit the tune, and jammer doesn't send lyrics anywhere. If a song has no translation in someone's language, they see the original.
 
-Leaders and assistants can paste lyrics for any song directly into the app. Pasted songs are:
-- Saved locally in your browser for next time
-- Synced to everyone in the jam via Firebase (temporarily, for the duration of the jam)
-- No copyrighted content is stored on any server
-
-### Multiple languages
-
-A song can carry translations, and **each person picks their own language on their own phone**. The leader chooses the song; one person reads it in English, the person beside them reads the same song in Polish. A projector can only ever show one language — this is the thing jammer can do that the AV system can't.
-
-To add one: "my songs" → **+ language** on a song → pick the language and paste the translated lyrics. If you have a SongSelect export in that language, paste that and the verses are read automatically.
-
-Tap **both** to show the original in smaller type beneath each line — useful for people bridging two languages, or when the leader is calling out English line cues.
-
-Amazing Grace ships with a Spanish translation as a worked example. **It has not been checked by a Spanish speaker** — verify it before a congregation sings from it.
-
-Translations are supplied by you, never machine-translated: a literal translation doesn't fit the tune, and jammer doesn't send lyrics anywhere. If a song has no translation in someone's chosen language, they simply see the original.
-
-### Pre-jam setup
-
-Tap "my songs" on the home screen to paste and save songs before the jam starts. When you open the song picker during a jam, your saved songs are ready to go.
+> Amazing Grace ships with a Spanish translation as a worked example. **It has not been checked by a Spanish speaker** — verify it before a congregation sings from it.
 
 ## Install it
 
-jammer runs in the browser with nothing to install. Leaders should install it anyway:
+jammer runs in any browser with nothing to install, but leaders should install it anyway:
 
-- **iPhone/iPad** — Share → Add to Home Screen
-- **Android/desktop Chrome** — an "install jammer" button appears in "my songs"
+- **iPhone / iPad** — Share → Add to Home Screen
+- **Android / desktop Chrome** — an "install jammer" button appears in "my songs"
 
-This matters because browsers clear site storage: Safari wipes it after about a week without opening the site, which would take your saved songs with it. Installed web apps are outside that timer, and jammer also asks the browser for persistent storage.
+Browsers clear site storage — Safari after about a week without opening the site — which would take your saved songs with it. Installed web apps sit outside that timer, and jammer also asks for persistent storage.
 
-If you don't install, nothing breaks — songs still save to normal browser storage exactly as before, and "my songs" tells you they aren't protected. Use **export** for a copy you keep yourself either way.
-
-## Built-in songs
-
-16 public domain hymns with guitar chords, including Amazing Grace, Holy Holy Holy, Be Thou My Vision, It Is Well, How Great Thou Art, Come Thou Fount, and more.
-
-## Tech
-
-- React + TypeScript + Vite
-- Firebase Realtime Database for multi-device sync
-- BroadcastChannel as local dev fallback
-- No accounts, no app install — just a URL
+Nothing breaks if you don't install: songs still save to normal browser storage, and "my songs" tells you when they aren't protected. Either way, **export** gives you a copy you keep.
 
 ## Getting started
 
-**Prerequisites:** Node.js 18+, git
+**Prerequisites:** Node.js 20+, git
 
 ```bash
 git clone https://github.com/willwoodward/jammer.git
 cd jammer
 npm install
-```
-
-Create a `.env` file in the root — ask Will to share this with you, then:
-
-```bash
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). That's it.
+Open [localhost:5173](http://localhost:5173).
 
-### Test multi-device sync locally
+For multi-device sync you need a `.env` in the root (ask Will) — copy `.env.example` and fill it in, then **restart the dev server**, since Vite only reads it at startup. Without it, jammer falls back to `BroadcastChannel`, which syncs between tabs in the same browser but not across devices or into a private window.
 
-Open [http://localhost:5173/#/dev](http://localhost:5173/#/dev) to see a side-by-side leader + participant view syncing in real time.
+`#/dev` opens a side-by-side leader and participant view.
 
-### Deploy
+## How it's built
 
-Pushes to `main` auto-deploy to GitHub Pages via GitHub Actions. No manual steps needed.
+- **React + TypeScript + Vite**, deployed to GitHub Pages on every push to `main`
+- **Firebase Realtime Database** for sync; `BroadcastChannel` as a local fallback
+- **Installable PWA** — `vite-plugin-pwa` generates the manifest and service worker; icons in `public/` are placeholders worth replacing
+- Jam state lives in one context, `src/context/JamContext.tsx`
+- Built-in lyrics are in `src/data/songs.ts`, each with optional `translations`
+- Importers are in `src/lib/parsers/` — `songselect.ts` is hand-written; `propresenter.ts` wraps `propresenter-parser` and is loaded on demand, so participants never download it
+- Saved songs are per-browser in `localStorage`; songs shared into a jam sync through Firebase and are removed with the jam
 
-## Database rules
+## Operating it
 
-`database.rules.json` protects the Realtime Database, which has no user accounts — the rules are the only thing between the public and every jam. They:
+### Database rules
 
-- stop anyone listing all jams; you can only read a jam whose code you know
-- make a jam unreadable and unwritable 24 hours after it was created
-- require a server-set `createdAt` that can't be backdated or extended
-- cap what can be written into a jam, so it can't be used as free storage
-
-Test them against the emulator before deploying (needs Java):
+The database has no user accounts, so `database.rules.json` is the only thing between the public and every jam. It stops anyone listing jams (you can only read one whose code you know), makes a jam unreadable 24 hours after creation, requires a server-set `createdAt` that can't be backdated or extended, and caps what can be written so the database can't be used as free storage.
 
 ```bash
-npm run test:rules
-npm run deploy:rules
+npm run test:rules     # 23 assertions against the emulator (needs Java)
+npm run deploy:rules   # firebase deploy --only database
 ```
 
-**Deploy the app before the rules.** The rules require a server-set timestamp, which older builds don't send.
+> **Deploy the app before the rules.** The rules require a server-set timestamp that older builds don't send.
 
-Old jams are swept daily by `.github/workflows/sweep-jams.yml`, which deletes anything over 24 hours old. It needs two repository secrets: `FIREBASE_SERVICE_ACCOUNT` (a service-account JSON key) and `FIREBASE_DATABASE_URL`. Run it manually with `dry_run` first.
+### Sweeping old jams
 
-## Dev notes
+A jam is deleted when the leader taps back, but most sessions end another way — a closed tab, a flat battery, lost signal — leaving the jam and its lyrics behind. [`sweep-jams.yml`](.github/workflows/sweep-jams.yml) removes anything over 24 hours old, daily.
 
-- `/dev` — side-by-side test view
-- Firebase syncs jam state across devices; BroadcastChannel is used as a fallback when `.env` isn't configured
-- Song lyrics are bundled in `src/data/songs.ts` — add new public domain songs there, with optional `translations` per song
-- Pasted/custom songs are stored in the user's `localStorage` and synced ephemerally via Firebase for the duration of a jam
-- Song importers live in `src/lib/parsers/` — `songselect.ts` is hand-written, `propresenter.ts` wraps the `propresenter-parser` package and is loaded on demand so participants never download it
+It needs two repository secrets: `FIREBASE_SERVICE_ACCOUNT` (a service-account JSON key) and `FIREBASE_DATABASE_URL`. Run it manually with **dry_run** first to see what it would delete.
+
+Deletion is by age alone, never by inactivity — an inactivity heuristic would eventually delete a jam that is quietly in use, and that failure would happen live, in front of a congregation.
+
+## Licence
+
+[MIT](LICENSE) — use it, fork it, run it in your church. The built-in hymns are public domain; anything you import or paste stays yours and is never uploaded anywhere.
