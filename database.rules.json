@@ -1,0 +1,53 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "jams": {
+      ".indexOn": ["createdAt"],
+
+      "$code": {
+        ".read": "!data.exists() || data.child('createdAt').val() > now - 86400000",
+
+        ".write": "(!data.exists() && newData.child('createdAt').val() >= now - 10000 && newData.child('createdAt').val() <= now + 10000) || (data.exists() && data.child('createdAt').val() > now - 86400000)",
+
+        ".validate": "newData.child('createdAt').isNumber()",
+
+        "createdAt": {
+          ".validate": "newData.isNumber() && (!data.exists() || newData.val() == data.val())"
+        },
+
+        "currentSongId": {
+          ".validate": "newData.isString() && newData.val().length <= 200"
+        },
+
+        "members": {
+          "$member": {
+            ".validate": "newData.isBoolean()"
+          }
+        },
+
+        "customSongs": {
+          "$song": {
+            ".validate": "newData.child('title').isString() && newData.child('title').val().length <= 200",
+
+            "title": { ".validate": "newData.isString() && newData.val().length <= 200" },
+            "artist": { ".validate": "newData.isString() && newData.val().length <= 200" },
+            "key": { ".validate": "newData.isString() && newData.val().length <= 20" },
+            "ccliNumber": { ".validate": "newData.isString() && newData.val().length <= 40" },
+            "source": { ".validate": "newData.isString() && newData.val().length <= 40" },
+            "language": { ".validate": "newData.isString() && newData.val().length <= 40" },
+            "lyrics": { ".validate": "newData.isString() && newData.val().length <= 50000" },
+
+            "sections": { ".validate": "newData.hasChildren()" },
+            "translations": { ".validate": "newData.hasChildren()" },
+
+            "$other": { ".validate": false }
+          }
+        },
+
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

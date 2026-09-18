@@ -17,15 +17,20 @@ export default function JoinJam() {
     if (!autoCode || autoTried.current) return
     autoTried.current = true
     setJoining(true)
-    joinJam(autoCode).then((ok) => {
-      setJoining(false)
-      if (ok) {
-        navigate(`/jam/${autoCode.toUpperCase().replace(/-A$/, '')}`)
-      } else {
+    joinJam(autoCode)
+      .then((ok) => {
+        if (ok) {
+          navigate(`/jam/${autoCode.toUpperCase().replace(/-A$/, '')}`)
+          return
+        }
         setCode(autoCode.toUpperCase())
         setError('jam not found')
-      }
-    })
+      })
+      .catch(() => {
+        setCode(autoCode.toUpperCase())
+        setError('jam not found')
+      })
+      .finally(() => setJoining(false))
   }, [searchParams, joinJam, navigate])
 
   async function handleJoin(e: React.FormEvent) {
@@ -35,14 +40,15 @@ export default function JoinJam() {
 
     setJoining(true)
     setError('')
-    const ok = await joinJam(trimmed)
-    setJoining(false)
-
-    if (ok) {
-      const jamCode = trimmed.toUpperCase().replace(/-A$/, '')
-      navigate(`/jam/${jamCode}`)
-    } else {
+    try {
+      if (await joinJam(trimmed)) {
+        navigate(`/jam/${trimmed.toUpperCase().replace(/-A$/, '')}`)
+        return
+      }
       setError('jam not found')
+    } finally {
+      // Never leave the button stuck on "joining..."
+      setJoining(false)
     }
   }
 

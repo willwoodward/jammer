@@ -110,6 +110,26 @@ Open [http://localhost:5173/#/dev](http://localhost:5173/#/dev) to see a side-by
 
 Pushes to `main` auto-deploy to GitHub Pages via GitHub Actions. No manual steps needed.
 
+## Database rules
+
+`database.rules.json` protects the Realtime Database, which has no user accounts — the rules are the only thing between the public and every jam. They:
+
+- stop anyone listing all jams; you can only read a jam whose code you know
+- make a jam unreadable and unwritable 24 hours after it was created
+- require a server-set `createdAt` that can't be backdated or extended
+- cap what can be written into a jam, so it can't be used as free storage
+
+Test them against the emulator before deploying (needs Java):
+
+```bash
+npm run test:rules
+npm run deploy:rules
+```
+
+**Deploy the app before the rules.** The rules require a server-set timestamp, which older builds don't send.
+
+Old jams are swept daily by `.github/workflows/sweep-jams.yml`, which deletes anything over 24 hours old. It needs two repository secrets: `FIREBASE_SERVICE_ACCOUNT` (a service-account JSON key) and `FIREBASE_DATABASE_URL`. Run it manually with `dry_run` first.
+
 ## Dev notes
 
 - `/dev` — side-by-side test view

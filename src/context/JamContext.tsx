@@ -1,5 +1,15 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react'
-import { ref, set, onValue, remove, get, push, onDisconnect, type Unsubscribe } from 'firebase/database'
+import {
+  ref,
+  set,
+  onValue,
+  remove,
+  get,
+  push,
+  onDisconnect,
+  serverTimestamp,
+  type Unsubscribe,
+} from 'firebase/database'
 import { db, isConfigured } from '../firebase'
 import type { JamState, CustomSong, ImportedSong } from '../types'
 import { fromFirebase, toFirebase } from '../lib/customSong'
@@ -165,7 +175,9 @@ export function JamProvider({ children }: { children: ReactNode }) {
     if (isConfigured && db) {
       set(ref(db, `jams/${code}`), {
         currentSongId: null,
-        createdAt: Date.now(),
+        // The server's clock, not the device's — a phone with a wrong clock
+        // would otherwise create a jam that expires immediately or never
+        createdAt: serverTimestamp(),
       })
     }
 
@@ -181,7 +193,15 @@ export function JamProvider({ children }: { children: ReactNode }) {
     const role = isAssistant ? 'assistant' : 'participant'
 
     if (isConfigured && db) {
-      const snapshot = await get(ref(db, `jams/${jamCode}`))
+      let snapshot
+      try {
+        snapshot = await get(ref(db, `jams/${jamCode}`))
+      } catch {
+        // An expired jam is unreadable by the security rules rather than
+        // absent, so a denied read means the same thing to the user as a
+        // missing one: this code is no good any more.
+        return false
+      }
       if (!snapshot.exists()) {
         return false
       }

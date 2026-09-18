@@ -1,0 +1,56 @@
+name: Sweep old jams
+
+# Jams are deleted when a leader taps back, but most sessions end another way —
+# a closed tab, a flat battery, lost signal — leaving the jam and its pasted
+# lyrics in the database. This removes anything older than a day.
+
+on:
+  schedule:
+    # 03:17 UTC daily. An odd minute, because on-the-hour schedules are the
+    # busiest and most likely to be delayed by GitHub.
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      max_age_hours:
+        description: 'Delete jams older than this many hours'
+        required: false
+        default: '24'
+      dry_run:
+        description: 'List what would be deleted, without deleting'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sweep-jams
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: >-
+            https://www.googleapis.com/auth/firebase.database,
+            https://www.googleapis.com/auth/userinfo.email
+
+      - name: Sweep
+        run: node scripts/sweep-jams.mjs
+        env:
+          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
+          FIREBASE_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          MAX_AGE_HOURS: ${{ inputs.max_age_hours || '24' }}
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
